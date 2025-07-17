@@ -11,7 +11,7 @@ const ReviewSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  author: {
+  author: { // optional : in the case that it is a user review 
     type: String,
     trim: true
   },

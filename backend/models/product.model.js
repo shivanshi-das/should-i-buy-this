@@ -28,4 +28,7 @@ const ProductSchema = new mongoose.Schema({
   timestamps: true, // adds createdAt and updatedAt fields
 });
 
+// check for uniques
+ProductSchema.index({ name: 1, brand: 1 }, { unique: true });
+
 export default mongoose.model('Product', ProductSchema);

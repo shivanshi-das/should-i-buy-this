@@ -2,17 +2,18 @@ import Product from "../models/product.model.js";
 import Review from "../models/review.model.js";
 
 
+// Internal Use Only
 const createReview = async (req, res) => {
     try {
-        const { productName, platform, content, sentimentScore } = req.body;
+        const { productName, platform, content, sentimentScore, pros, cons, author } = req.body;
 
         if (!productName || !platform || !content) { // Mostly for debug purposes atm
-            return res.status(404).json({
+            return res.status(400).json({
                 message: "Missing required fields: product, platform, or content",
                 success: false,
             });
         }
-        
+
         if (sentimentScore !== undefined && (sentimentScore < -1 || sentimentScore > 1)) {
             return res.status(400).json({
                 message: "Sentiment score must be between -1 and 1",
@@ -25,39 +26,71 @@ const createReview = async (req, res) => {
 
         if (!product) {
             return res.status(404).json({
-                message: "Product not found.",
+                message: "Product not found. Create the product before adding reviews.",
                 success: false,
             });
         }
 
         const review = new Review({
             product: product._id,
-            content,
             platform,
-            sentimentScore
+            content,
+            sentimentScore,
+            pros,
+            cons,
+            author
         })
 
         const reviewEntry = await review.save();
-        res.status(201).json({
+        return res.status(201).json({
             message: "Review created.",
             review: reviewEntry,
             success: true
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Internal server error while creating review.",
+            success: false
+        });
     }
 }
 
+// User Facing 
 const getReviewsByProduct = async (req, res) => {
-    console.log("Fetching reviews for:", req.params.productId);
     try {
-        const reviews = await Review.find({ product: req.params.productId });
+        // Optional filtering 
+        const { productId } = req.params;
+        const { platform } = req.query;
+
+        if (!productId) {
+            return res.status(400).json({
+                message: "Missing productId in route parameter.",
+                success: false
+            });
+        }
+
+        const query = {
+            product: productId
+        }
+
+        if (platform) {
+            query.platform = platform;
+        }
+        const reviews = await Review.find(query)
+        .sort({ createdAt: -1 })
+        .select("-__v");
+        
         res.status(200).json({
             reviews,
             success: true
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Internal server error while fetching reviews.",
+            success: false
+        });
     }
 }
 
