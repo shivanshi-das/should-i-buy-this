@@ -42,6 +42,22 @@ const createReview = async (req, res) => {
         })
 
         const reviewEntry = await review.save();
+
+        // Auto Update Avg Rating 
+
+        const reviews = await Review.find({
+            product: product._id,
+            sentimentScore: { $ne: null }
+        });
+
+        const total = reviews.reduce((sum, r) => sum + r.sentimentScore, 0);
+        const avg = reviews.length ? total / reviews.length : 0; 
+
+        // update 
+
+        product.avgRating = parseFloat(avg.toFixed(2)); // 2 decimal points 
+        await product.save();
+
         return res.status(201).json({
             message: "Review created.",
             review: reviewEntry,
@@ -78,9 +94,9 @@ const getReviewsByProduct = async (req, res) => {
             query.platform = platform;
         }
         const reviews = await Review.find(query)
-        .sort({ createdAt: -1 })
-        .select("-__v");
-        
+            .sort({ createdAt: -1 })
+            .select("-__v");
+
         res.status(200).json({
             reviews,
             success: true
