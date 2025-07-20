@@ -1,5 +1,10 @@
 import { reddit } from './redditClient.js';
-import { isReviewLike } from './reviewSignals.js';
+import {
+  isReviewLike,
+  positiveKeywords,
+  negativeKeywords
+} from "../reddit/reviewSignals.js";
+
 
 function mentionsExactProduct(text, productName) {
   const lowerText = text.toLowerCase();
@@ -84,3 +89,4 @@ export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
 
     return allPosts;
 }
+
