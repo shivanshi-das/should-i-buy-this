@@ -1,18 +1,18 @@
 import { reddit } from './redditClient.js';
 import {
-  isReviewLike,
-  positiveKeywords,
-  negativeKeywords
+    isReviewLike,
+    positiveKeywords,
+    negativeKeywords
 } from "../reddit/reviewSignals.js";
 
 
 function mentionsExactProduct(text, productName) {
-  const lowerText = text.toLowerCase();
-  const base = productName.toLowerCase();
+    const lowerText = text.toLowerCase();
+    const base = productName.toLowerCase();
 
-  return lowerText.includes(base) ||
-         lowerText.includes(base + 's') ||
-         lowerText.includes(base + 'es');
+    return lowerText.includes(base) ||
+        lowerText.includes(base + 's') ||
+        lowerText.includes(base + 'es');
 }
 
 function isAskingAboutProduct(text) {
@@ -35,6 +35,15 @@ function isLikelyProductReview(text) {
     return isReviewLike(text) && !isGenericLookPost(text);
 }
 
+
+// function isHighQualityComment(comment) {
+//     if (!comment.body) return false;
+//     const wordCount = comment.body.trim().split(/\s+/).length;
+//     const isStrongReview = isLikelyProductReview(comment.body);
+//     return wordCount >= 30 && isStrongReview && comment.score >= 3;
+// }
+
+
 export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
     const allPosts = [];
 
@@ -42,7 +51,7 @@ export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
         try {
             const results = await reddit.getSubreddit(sub).search({
                 query: `"${query}"`, // forces exact phrase match
-                time: 'year',
+                time: 'all',
                 sort: 'relevance',
                 limit
             });
@@ -59,9 +68,17 @@ export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
                 const isQuestionAskingForOpinions = isAskingAboutProduct(combinedText);
 
                 if (!isDeleted && hasText && mentionsExact && (isReview || isQuestionAskingForOpinions)) {
-                    await post.expandReplies({ limit: Infinity, depth: 1 });
+                    const fullPost = await reddit.getSubmission(post.id).expandReplies({ limit: Infinity, depth: 2 });
 
-                    const opinionatedComments = post.comments
+                  //console.log(`Post: ${post.title} → ${fullPost.comments.length} comments loaded`);
+                    // fullPost.comments.forEach(c => {
+                    //     if (c.body) console.log(`COMMENT:`, c.body);
+                    // });
+
+
+
+
+                    const opinionatedComments = fullPost.comments
                         .filter(c => c.body && isLikelyProductReview(c.body))
                         .map(c => ({
                             comment_id: c.id,
@@ -69,6 +86,7 @@ export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
                             body: c.body,
                             score: c.score,
                         }));
+
 
                     allPosts.push({
                         thread_id: post.id,

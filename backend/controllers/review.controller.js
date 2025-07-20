@@ -148,7 +148,11 @@ export const analyzeProductReviews = async (req, res) => {
     try {
         const productName = req.query.product;
         const shouldSave = req.query.save === "true";
-        const subreddits = ["MakeupAddiction", "SkincareAddiction", "beautytalkph", "AsianBeauty"]; // test
+        const subreddits = [
+            "MakeupAddiction", "SkincareAddiction", "beautytalkph",
+            "AsianBeauty", "oliveMUA", "MakeupReviews",
+            "MakeupRehab", "drugstoreMUA"
+        ];
 
         if (![productName]) {
             return res.status(400).json({ error: "Missing ?product parameter" });
@@ -189,19 +193,22 @@ export const analyzeProductReviews = async (req, res) => {
                 }
             }
         }
-
         topQuotes = [...filtered]
+         // .filter(entry => looselyMentionsProduct(entry.content, productName)) // ✅ Only keep loose mentions
+            .sort((a, b) => b.upvotes - a.upvotes)       // Sort by upvotes
+            .slice(0, 10)                                // Take top 10 most upvoted
             .map(entry => ({
                 ...entry,
-                ...calculateSentiment(entry.content)
+                ...calculateSentiment(entry.content)       // Add sentiment score
             }))
-            .sort((a, b) => b.sentimentScore - a.sentimentScore)
-            .slice(0, 3)
+            .sort((a, b) => b.sentimentScore - a.sentimentScore) // Sort by sentiment
+            .slice(0, 3)                                 // Final top 3
             .map(e => ({
                 snippet: e.content.slice(0, 150),
                 author: e.author,
                 url: e.url
             }));
+
 
 
         const avgSentiment = filtered.length ? totalScore / filtered.length : 0;

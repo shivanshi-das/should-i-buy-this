@@ -17,7 +17,7 @@ export const negativeKeywords = [
   'hard to remove', 'hard to blend', 'didn’t last', 'wore off quickly',
   'fade fast', 'patchy', 'flaked off', 'clumped', 'smudged', 'melted off',
   'looked patchy', 'accentuated texture', 'shade pulled orange',
-  'shade range needs improvement', 'doesn’t live up to the hype',
+  'shade range needs improvement', 'doesn’t live up to the hype', 'too intense',
   'de-influenced me'
 ];
 
@@ -26,7 +26,7 @@ export const contextKeywords = [
   'i use', 'i tried', 'i own', 'i have', 'applied with brush', 'applied with fingers',
   'spooly', 'needs warming', 'with primer', 'over powder', 'under foundation',
   'used to work', 'wore it all day', 'made me look cute', 'similar to', 'like [brand]',
-  'like my [other product]', 'reminds me of', 'dupe for', 'better than', 'worse than'
+  'like my [other product]', 'reminds me of', 'dupe for', 'better than', 'worse than', 'cheaper than'
 ];
 
 export const reviewSignals = [
@@ -35,7 +35,8 @@ export const reviewSignals = [
   ...contextKeywords
 ];
 
-export const reviewRegex = new RegExp(`\\b(${reviewSignals.join("|")})\\b`, "i");
+// export const reviewRegex = new RegExp(`\\b(${reviewSignals.join("|")})\\b`, "i");
+const reviewRegex = new RegExp(`\\b(${reviewSignals.join("|")})\\b`, "i");
 
 export function isReviewLike(text) {
   return reviewRegex.test(text.toLowerCase());
