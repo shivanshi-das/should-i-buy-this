@@ -1,2 +1,5 @@
 # should-i-buy-this
-Reddit-backed review aggregator that helps users decide whether to buy a product. Built using MERN stack. 
+> **Archived MVP**  
+> This project was an experimental Reddit review analyzer using custom heuristics.  
+> I plan to revisit it with a better classifier and improved UI/UX in the future.
+
