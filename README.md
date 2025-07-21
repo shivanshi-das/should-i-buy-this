@@ -1,4 +1,4 @@
-# Reddit Product Review Analyzer (Archived MVP)
+# should-i-buy-this (Archived MVP)
 
 **Archived MVP**
 This project is a Reddit-based product review analyzer built using the MERN stack. It applies lightweight NLP heuristics to extract and summarize product reviews from Reddit discussions.
