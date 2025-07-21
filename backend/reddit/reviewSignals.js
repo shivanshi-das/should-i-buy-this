@@ -7,7 +7,8 @@ export const positiveKeywords = [
   'the hype is real', 'prefer it over', 'influenced me to buy', 'HG',
   'adds volume', 'holds a curl', 'natural look', 'blendable', 'buildable',
   'lightweight', 'comfortable to wear', 'easy to remove', 'creamy formula',
-  'easy to blend', 'used in hot weather', 'every time I try something else I come back'
+  'easy to blend', 'used in hot weather', 'every time I try something else I come back',
+  'used for over', 'been using it', 'ride or die'
 ];
 
 export const negativeKeywords = [

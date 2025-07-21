@@ -35,15 +35,6 @@ function isLikelyProductReview(text) {
     return isReviewLike(text) && !isGenericLookPost(text);
 }
 
-
-// function isHighQualityComment(comment) {
-//     if (!comment.body) return false;
-//     const wordCount = comment.body.trim().split(/\s+/).length;
-//     const isStrongReview = isLikelyProductReview(comment.body);
-//     return wordCount >= 30 && isStrongReview && comment.score >= 3;
-// }
-
-
 export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
     const allPosts = [];
 
@@ -67,7 +58,7 @@ export async function searchFilteredPosts(query, subreddits = [], limit = 10) {
                 const isReview = isLikelyProductReview(combinedText);
                 const isQuestionAskingForOpinions = isAskingAboutProduct(combinedText);
 
-                if (!isDeleted && hasText && mentionsExact && (isReview || isQuestionAskingForOpinions)) {
+                if (!isDeleted && hasText && mentionsExact && (isReview || isQuestionAskingForOpinions)) { // check q logic 
                     const fullPost = await reddit.getSubmission(post.id).expandReplies({ limit: Infinity, depth: 2 });
 
                   //console.log(`Post: ${post.title} → ${fullPost.comments.length} comments loaded`);
